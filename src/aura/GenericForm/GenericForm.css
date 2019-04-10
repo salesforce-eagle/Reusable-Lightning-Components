@@ -1,0 +1,9 @@
+.THIS .slds-form-element__control.slds-grid.itemBody.fillGrey.slds-form-element_readonly:hover svg{
+    fill: rgb(112, 110, 107);
+}
+
+.THIS button.slds-button.slds-button_reset.slds-accordion__summary-action{
+    background: rgb(243, 242, 242);
+    height: 31px;
+    padding: 0.5rem;
+}

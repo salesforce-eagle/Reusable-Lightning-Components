@@ -1,0 +1,194 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId,force:lightningQuickActionWithoutHeader"
+                extends="c:BaseComponent"
+                extensible="true">
+    
+    <!--	Response from Outer Component (GenericSectionDesigner) to be stored in below attributes	-->
+    <aura:attribute name="cmpName" type="String" default="notset" />
+    <aura:attribute name="SrecordId" type="String" default=""/>    
+    <aura:attribute name="sObjectName" type="String"/>
+    <aura:attribute name="sectionsList" type="String[]" />
+    <aura:attribute name="activeSections" type="String[]" />
+    <aura:attribute name="allFields" type="String[]" />
+    <aura:attribute name="serviceReadOnlyFlag" type="Boolean" />	
+    <aura:attribute name="sectionReadOnlyInfo" type="List" />
+    <aura:attribute name="sectionRequiredFieldInfo" type="List"/>
+    <aura:attribute name="customSaveFlag" type="Boolean"/>
+    <aura:attribute name="CheckBooleanforStandardFlag" type="Boolean"/>
+    <!--
+    <aura:registerEvent name="cmpSaveEvent" type="c:TemplateBindingSaveEvent"/>
+    <aura:registerEvent name="cmpCancelEvent" type="c:TemplateBindingCancelEvent"/>
+    -->
+    <aura:attribute name="isNewRec" type="Boolean" default="false"/>
+    
+    <aura:attribute name="showDeletebutton" type="Boolean" default="false"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <!--	Design attribute for LDS attribute	-->
+    <aura:attribute name="record" type="Object" />
+    <aura:attribute name="simpleRecord" type="Object"/>
+    <aura:attribute name="sampleError" type="Object"/>
+    
+    <!--	Attribute used for Mode change Event	
+    <aura:attribute name="displayMode" type="String" default="read" />-->
+    
+    <!--	Event Handler for Mode Change is added here	-->
+    <!--<aura:registerEvent name="WFModeChanged" type="c:WFModeChanged"/>
+    <aura:handler name="WFModeChanged" event="c:WFModeChanged" action="{!c.modeChanged}"/>-->
+    
+    
+    <aura:handler event="c:WFModeChanged" action="{!c.modeChanged}"/>
+    <!--	Handller Functions	-->
+    <!-- LDS RECORD -->
+    
+    
+    <!--	New Record Creation	-->
+    <aura:attribute name="newRec" type="Object" access="public"/>
+    <aura:attribute name="simpleNewRec" type="Object" access="public"/>
+    <aura:attribute name="newRecError" type="String" access="public"/>
+    
+    <!--	Attribute End	-->
+    
+    
+    <aura:if isTrue="{!v.isNewRec}">        
+        <!--	This section will work for New record and (RecordId and Sample record will be set to blank here)	-->
+        <force:recordData aura:id="recordCreator" 
+                          targetRecord="{!v.newRec}"
+                          targetFields="{!v.simpleNewRec}"
+                          targetError="{!v.newRecError}"
+                          mode="EDIT"
+                          layoutType="FULL"
+                          fields="{!v.allFields}"
+                           recordUpdated="{!c.handleRecordUpdated}"/>
+        <!--	As SimpleRecord Will have only One record It will not work as Item in Iterator	-->
+        <lightning:recordEditForm aura:id="editForm"
+                                  objectApiName="{!v.sObjectName}"
+                                  recordId="{!v.SrecordId}"
+                                  onsubmit="{!c.SaveRecordLogic}"
+                                  
+                                  ><!--	onsubmit="{!c.SaveRecordLogic}"	-->
+            <lightning:card title=""><!--	{!v.simpleNewRec.Name}	-->
+                <lightning:accordion allowMultipleSectionsOpen="true" activeSectionName="{!v.activeSections}">
+                    <aura:iteration items="{!v.sectionsList}" var="currSection" >
+                        <lightning:accordionSection name="{!currSection.Section}" label="{!currSection.Section}">
+                            <aura:set attribute="body"> <!--	This will set the Body in Parent Component	-->
+                                <div class="slds-grid">
+                                    <div class="slds-col slds-size_1-of-2" style="padding:20px;">
+                                        <aura:iteration items="{!currSection.Fields}" var="flds" indexVar="index">
+                                            <!--	Input & OutPut field will be rendered here and show and hide logic shou be applied here	-->
+                                            <aura:if isTrue="{!(index%2==0)}">                                                
+                                                <c:GenericField sObjectName="{!v.sObjectName}"
+                                                                       fieldApiName="{!flds}"
+                                                                       currentRecord="{!v.simpleNewRec}"
+                                                                       sampleError="{!v.sampleError}"
+                                                                       displayMode="edit"
+                                                                       fieldsToDisable= "{!currSection.readonlyFields}"
+                                                                       requiredFields="{!currSection.requiredFields}"
+                                                                       cmpName="{!v.cmpName}"/>                                                
+                                            </aura:if>
+                                        </aura:iteration>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-2" style="padding:20px;">
+                                        <aura:iteration items="{!currSection.Fields}" var="fname" indexVar="index" >
+                                            <aura:if isTrue="{!(index%2==1)}">
+                                                <c:GenericField sObjectName="{!v.sObjectName}" 
+                                                                       fieldApiName="{!fname}" 
+                                                                       currentRecord="{!v.simpleNewRec}"
+                                                                       sampleError="{!v.sampleError}"
+                                                                       displayMode="edit"
+                                                                       fieldsToDisable= "{!currSection.readonlyFields}"
+                                                                       requiredFields="{!currSection.requiredFields}"
+                                                                       cmpName="{!v.cmpName}"/>
+                                            </aura:if>
+                                        </aura:iteration>
+                                    </div>                                      
+                                </div>
+                            </aura:set>
+                        </lightning:accordionSection>
+                    </aura:iteration>
+                </lightning:accordion>
+            </lightning:card>    
+            <div style="text-align:center; margin-top:15px; padding-bottom:15px;">
+                <lightning:button label="Cancel" variant="neutral"  onclick="{!c.handleCancel}"/>
+                <lightning:button label="Save" variant="brand"  type = "submit"/>
+            </div>  
+        </lightning:recordEditForm>
+        
+    </aura:if>
+    <!--	New Record section End	-->
+    
+    <!--	Else part will work for Edit and View 	-->        
+    <aura:if isTrue="{!not(v.isNewRec)}">        
+        <force:recordData aura:id="recordEditor"
+                          recordId="{!v.SrecordId}"
+                          targetRecord ="{!v.record}"
+                          targetError="{!v.sampleError}"
+                          mode="EDIT"
+                          layoutType="FULL"
+                          targetFields ="{!v.simpleRecord}"
+                          fields="{!v.allFields}"
+                           recordUpdated="{!c.handleRecordUpdated}"/>
+      <!-- recordUpdated="{!c.recordUpdated}" -->
+        <!--	As SimpleRecord Will have only One record It will not work as Item in Iterator	-->
+        <aura:if isTrue="{!not(empty(v.simpleRecord))}">
+            <lightning:recordEditForm aura:id="editForm"
+                                      objectApiName="{!v.sObjectName}"
+                                      recordId="{!v.SrecordId}"
+                                      onsubmit="{!c.SaveRecordLogic}"><!--		-->
+                <lightning:card title=""><!--	{!v.simpleRecord.Name}	-->
+                    <lightning:accordion allowMultipleSectionsOpen="true" activeSectionName="{!v.activeSections}">
+                        <aura:iteration items="{!v.sectionsList}" var="currSection" >
+                            <lightning:accordionSection name="{!currSection.Section}" label="{!currSection.Section}">
+                                <aura:set attribute="body"> <!--	This will set the Body in Parent Component	-->
+                                    <div class="slds-grid">
+                                        <div class="slds-col slds-size_1-of-2" style="padding:20px;">
+                                            <aura:iteration items="{!currSection.Fields}" var="flds" indexVar="index">
+                                                <!--	Input & OutPut field will be rendered here and show and hide logic shou be applied here	-->
+                                                <aura:if isTrue="{!(index%2==0)}">
+                                                    
+                                                    <c:GenericField sObjectName="{!v.sObjectName}"
+                                                                           fieldApiName="{!flds}"
+                                                                           currentRecord="{!v.simpleRecord}"
+                                                                           displayMode="{!v.displayMode}"
+                                                                           fieldsToDisable= "{!currSection.readonlyFields}"
+                                                                           requiredFields="{!currSection.requiredFields}"
+                                                                           cmpName="{!v.cmpName}"
+                                                                           />                                                
+                                                </aura:if>
+                                            </aura:iteration>
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-2" style="padding:20px;">
+                                            <aura:iteration items="{!currSection.Fields}" var="fname" indexVar="index" >
+                                                <aura:if isTrue="{!(index%2==1)}">
+                                                    <c:GenericField sObjectName="{!v.sObjectName}" 
+                                                                           fieldApiName="{!fname}" 
+                                                                           currentRecord="{!v.simpleRecord}"
+                                                                           displayMode="{!v.displayMode}"
+                                                                           fieldsToDisable= "{!currSection.readonlyFields}"
+                                                                           requiredFields="{!currSection.requiredFields}"
+                                                                           cmpName="{!v.cmpName}"/>
+                                                </aura:if>
+                                            </aura:iteration>
+                                        </div>  
+                                        
+                                    </div>
+                                </aura:set>
+                            </lightning:accordionSection>
+                        </aura:iteration>
+                    </lightning:accordion>
+                </lightning:card> 
+                <aura:if isTrue="{!(v.displayMode=='edit')}">
+                    <div style="text-align:center; margin-top:15px; padding-bottom:15px;">
+                        <lightning:button label="Cancel" variant="neutral"  onclick="{!c.handleCancel}"/>
+                        <lightning:button label="Save" variant="brand"  type = "submit" /><!--	onclick="{!c.SaveRecordLogic}"	-->
+                    </div>
+                </aura:if>
+            </lightning:recordEditForm>
+            
+        </aura:if>
+        
+        <!--	End of Else	--> 
+        
+    </aura:if>
+    
+</aura:component>

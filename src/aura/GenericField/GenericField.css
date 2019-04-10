@@ -1,0 +1,144 @@
+.THIS .slds-input:required { 
+    border-left-color:red;
+    border-left-width:medium;
+}
+
+.THIS .dummy svg {
+    fill : rgb(236, 235, 234);
+}
+.THIS .dummy:hover svg {
+    fill : rgb(0, 112, 210)!important;
+}
+
+.THIS .dummy {
+    display:inline;
+    float:right;
+}
+
+@media only screen and (device-width: 768px),
+    only screen and (min-width: 768px) {
+    .THIS lightning-output-field.slds-form-element > .slds-form-element__label ~ div.slds-form-element__control{
+        margin-left:45%;
+        margin-top:-20px;
+        width:50%;
+    }
+    .THIS .slds-form-element__label{
+        max-width:33%;
+    }
+    
+    .THIS .slds-form-element__control{
+        padding-top: 0em !important;
+        padding-bottom: 0em !important;
+    }
+    /*Edit*/ 
+    .THIS .slds-checkbox .slds-form-element__label{
+        padding-bottom: 25px;
+    }
+    .THIS .slds-form-element__label{
+        max-width:40%;
+       /* padding-top: .5%;
+        padding-bottom: .5%;*/
+    }
+    
+    .THIS lightning-base-combobox.slds-combobox_container{
+        left: 33%;
+        width: 57%;
+    }
+    
+    .THIS .slds-dueling-list__column.slds-dueling-list__column_responsive{
+        margin-top: -24px;
+    }
+    
+    .THIS div.slds-form-element__control > div.slds-dueling-list {
+        margin-left: 33%;
+        width: 57%;
+    }
+    .THIS .slds-checkbox_faux{
+        float:right;
+        left:-64%;
+        top:10px;
+    }
+    
+    .THIS .slds-input-has-icon{
+        top:-18px;
+    }
+    
+    .THIS .slds-grow{
+        top:-20px;
+        left: 33%;
+        width: 57%;
+    }
+    
+    .THIS .slds-form-element__control.slds-input-has-icon.slds-input-has-icon_right{
+        left: 33%;
+        width: 57%;
+    }
+    
+    .THIS lightning-input.slds-form-element__static.slds-form-element > div.slds-form-element__control{
+        margin-left:0px;
+    }
+    
+    .THIS lightning-input.slds-form-element__static.slds-form-element > div.slds-form-element__control > span.slds-checkbox{
+        left:0%;
+    }
+    .THIS lightning-input.slds-form-element__static.slds-form-element > div.slds-form-element__control > span.slds-checkbox > label > span.slds-checkbox_faux{
+        float: initial;
+        left: 0%;
+        top: 0px;
+    }
+    /*End*/  
+}
+
+/* iPad Landscape */
+@media only screen and (min-device-width: 768px) and (max-device-width: 1024px) {
+    .THIS lightning-output-field.slds-form-element > .slds-form-element__label ~ div.slds-form-element__control{
+        margin-left:45%;
+        margin-top:-20px;
+    }
+    .THIS .slds-form-element__label{
+        max-width:33%;
+    }
+    
+    .THIS .slds-form-element__control{
+        padding-top: 0em !important;
+        padding-bottom: 0em !important;
+    }
+    
+    .THIS .slds-checkbox_faux{
+        float:right;
+        left:-61%;
+        top:2px;
+    }
+}
+
+/*.THIS lightning-output-field.slds-form-element {
+padding:calc(0.125rem) .25rem;
+display:contents;
+}*/
+
+.THIS .slds-form-element_readonly  {
+    border:bottom;
+}
+
+.THIS.disabled, .THIS.disabled input {
+    pointer-events: none;
+    cursor: not-allowed;
+    background-color: rgb(236, 235, 234);
+    border-color: rgb(201, 199, 197);
+}
+.THIS.disabled button {
+    display: none;
+}
+.THIS .customRequired{    
+    content: "*";
+    margin: 0 0.125rem 0 0.125rem;
+    color: rgb(194, 57, 52);
+    float: left; 
+}
+.THIS .none{
+    display:none; 
+}
+
+.THIS .custBtn{
+    visibility:hidden;
+}

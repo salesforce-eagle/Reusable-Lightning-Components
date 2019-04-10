@@ -1,0 +1,60 @@
+<aura:component extends="c:BaseComponent" implements="flexipage:availableForRecordHome" access="global">
+    <!-- ATTRIBUTES -->
+    <aura:attribute name="fieldApiName" type="String" />
+    <aura:attribute name="currentRecord" type="Object" />
+    <aura:attribute name="sampleError" type="Object" />
+    <aura:attribute name="sObjectName" type="String" />
+    <aura:attribute name="recordLoadMapping" type="Object" />
+    <aura:attribute name="fieldsToDisable" type="String[]" />
+    <aura:attribute name="requiredFields" type="String[]" />
+    <aura:attribute name="style" type="String" default=""/>
+    <aura:attribute name="disableEdit" type="Boolean" />
+    <aura:attribute name="displayMode" type="String" default="read"/>
+    <aura:attribute name="showInput" type="Boolean" default="true"/>
+    <aura:attribute name="toggler" type="Boolean" default="true"/>
+    
+    <aura:attribute name="cmpName" type="String" />
+    <!-- EVENT HANDLERS -->
+    <aura:handler name="init" value="{! this }" action="{! c.doInit }"/>
+    
+    
+    <aura:registerEvent name="WFInputFieldChanged" type="c:WFInputFieldChanged_New"/>
+    <aura:handler event="c:WFInputFieldChanged_New" action="{!c.somethingChanged}"/>
+    <aura:handler event="c:FieldDependencyRendering" action="{!c.handleDynamicRendering}"/>
+    
+    <!--<aura:registerEvent name="WFModeChanged" type="c:WFModeChanged"/>
+    <aura:handler name="WFModeChanged" event="c:WFModeChanged" action="{!c.modeChanged}"/>-->
+    <aura:handler event="c:WFModeChanged" action="{!c.modeChanged}"/>
+    
+    <!-- HTML CONTENT -->
+    <aura:if isTrue="{!(v.displayMode=='edit')}">
+      <aura:if isTrue="{!v.toggler}">
+        <div></div>
+        <lightning:inputField  onchange ="{!c.valueChanged}" aura:Id="myInputField" fieldName="{!v.fieldApiName}" class="{!v.style}"/>
+      <aura:set attribute="else">
+         <div></div>
+      </aura:set>
+      </aura:if>
+        <!-- </div> -->
+        <!--</div>-->
+    </aura:if>
+    <aura:if isTrue="{!(v.displayMode=='read')}">
+        <div class="slds-form-element__control slds-grid itemBody fillGrey slds-form-element_readonly" style="padding-bottom:4px;">
+            <span class="slds-form-element__static slds-grow ">
+                <div class="outputLookupContainer forceOutputLookupWithPreview slds-form-element" >
+                    <lightning:outputField style="width:90%" fieldName="{!v.fieldApiName}"/>
+                </div>
+            </span>
+            <aura:if isTrue="{!(v.disableEdit)}">
+                <button class="slds-button b1 test-id__inline-edit-trigger slds-button_icon slds-button_icon-small slds-shrink-none inline-edit-trigger slds-button_icon-container" type="button" title="Edit">
+                    <lightning:icon aura:id="fillGrey" iconName="utility:edit" size="xx-small" alternativeText="edit" onclick="{!c.clickedOn}" class="dummy"/><span class="slds-assistive-text">Edit</span>
+                </button>
+                <aura:set attribute="else">
+                    <button class="slds-button b1 test-id__inline-edit-trigger slds-button_icon slds-button_icon-small slds-shrink-none inline-edit-trigger slds-button_icon-container custBtn" type="button" title="Edit">
+                        <lightning:icon aura:id="fillGrey" iconName="utility:edit" size="xx-small" alternativeText="edit" class="dummy"/><span class="slds-assistive-text">Edit</span>
+                    </button>
+                </aura:set>
+            </aura:if>
+        </div> 
+    </aura:if>
+</aura:component>
