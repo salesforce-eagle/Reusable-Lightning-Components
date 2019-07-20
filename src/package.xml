@@ -6,9 +6,9 @@
     </types>
     <types>
         <members>*</members>
-		<members>BaseComponent</members>
+		<!--<members>BaseComponent</members>
 		<members>GenericField</members>
-		<members>GenericForm</members>
+		<members>GenericForm</members>-->
         <name>AuraDefinitionBundle</name>
     </types>
     <version>45.0</version>
